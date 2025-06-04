@@ -357,20 +357,25 @@ if (
         var searchVal = search ? encodeURIComponent(search.value) : '';
         var url = "admin_panel.php?ajax_participants=1&conf_id=<?php echo $conf_id; ?>&search=" + searchVal;
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", url, true);
         xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                // Behåll sökvärdet efter AJAX-refresh
-                var currentValue = search.value;
-                container.innerHTML = xhr.responseText;
-                var newSearch = document.getElementById("search_input_<?php echo $conf_id; ?>");
-                if (newSearch) {
-                    newSearch.value = currentValue;
-                    newSearch.focus();
-                    newSearch.setSelectionRange(currentValue.length, currentValue.length);
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    // Behåll sökvärdet efter AJAX-refresh
+                    var currentValue = search.value;
+                    container.innerHTML = xhr.responseText;
+                    var newSearch = document.getElementById("search_input_<?php echo $conf_id; ?>");
+                    if (newSearch) {
+                        newSearch.value = currentValue;
+                        newSearch.focus();
+                        newSearch.setSelectionRange(currentValue.length, currentValue.length);
+                    }
+                } else {
+                    // Visa felmeddelande om AJAX-anropet misslyckas
+                    container.innerHTML = "<div class='alert alert-danger'>Kunde inte ladda deltagarlistan (AJAX-fel).</div>";
                 }
             }
         };
+        xhr.open("GET", url, true);
         xhr.send();
     }
     function toggleAllCheckboxes_<?php echo $conf_id; ?>(){var c=document.getElementById("checkall_<?php echo $conf_id; ?>");var boxes=document.querySelectorAll("#participants_<?php echo $conf_id; ?> input[name='participant_ids[]']");for(var i=0;i<boxes.length;i++){boxes[i].checked=c.checked;}}
@@ -557,20 +562,25 @@ if (
         var searchVal = search ? encodeURIComponent(search.value) : '';
         var url = "admin_panel.php?ajax_participants=1&conf_id=<?php echo $conf_id; ?>&search=" + searchVal;
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", url, true);
         xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                // Behåll sökvärdet efter AJAX-refresh
-                var currentValue = search.value;
-                container.innerHTML = xhr.responseText;
-                var newSearch = document.getElementById("search_input_<?php echo $conf_id; ?>");
-                if (newSearch) {
-                    newSearch.value = currentValue;
-                    newSearch.focus();
-                    newSearch.setSelectionRange(currentValue.length, currentValue.length);
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    // Behåll sökvärdet efter AJAX-refresh
+                    var currentValue = search.value;
+                    container.innerHTML = xhr.responseText;
+                    var newSearch = document.getElementById("search_input_<?php echo $conf_id; ?>");
+                    if (newSearch) {
+                        newSearch.value = currentValue;
+                        newSearch.focus();
+                        newSearch.setSelectionRange(currentValue.length, currentValue.length);
+                    }
+                } else {
+                    // Visa felmeddelande om AJAX-anropet misslyckas
+                    container.innerHTML = "<div class='alert alert-danger'>Kunde inte ladda deltagarlistan (AJAX-fel).</div>";
                 }
             }
         };
+        xhr.open("GET", url, true);
         xhr.send();
     }
     function toggleAllCheckboxes_<?php echo $conf_id; ?>(){var c=document.getElementById("checkall_<?php echo $conf_id; ?>");var boxes=document.querySelectorAll("#participants_<?php echo $conf_id; ?> input[name='participant_ids[]']");for(var i=0;i<boxes.length;i++){boxes[i].checked=c.checked;}}
@@ -757,20 +767,25 @@ if (
         var searchVal = search ? encodeURIComponent(search.value) : '';
         var url = "admin_panel.php?ajax_participants=1&conf_id=<?php echo $conf_id; ?>&search=" + searchVal;
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", url, true);
         xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                // Behåll sökvärdet efter AJAX-refresh
-                var currentValue = search.value;
-                container.innerHTML = xhr.responseText;
-                var newSearch = document.getElementById("search_input_<?php echo $conf_id; ?>");
-                if (newSearch) {
-                    newSearch.value = currentValue;
-                    newSearch.focus();
-                    newSearch.setSelectionRange(currentValue.length, currentValue.length);
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    // Behåll sökvärdet efter AJAX-refresh
+                    var currentValue = search.value;
+                    container.innerHTML = xhr.responseText;
+                    var newSearch = document.getElementById("search_input_<?php echo $conf_id; ?>");
+                    if (newSearch) {
+                        newSearch.value = currentValue;
+                        newSearch.focus();
+                        newSearch.setSelectionRange(currentValue.length, currentValue.length);
+                    }
+                } else {
+                    // Visa felmeddelande om AJAX-anropet misslyckas
+                    container.innerHTML = "<div class='alert alert-danger'>Kunde inte ladda deltagarlistan (AJAX-fel).</div>";
                 }
             }
         };
+        xhr.open("GET", url, true);
         xhr.send();
     }
     function toggleAllCheckboxes_<?php echo $conf_id; ?>(){var c=document.getElementById("checkall_<?php echo $conf_id; ?>");var boxes=document.querySelectorAll("#participants_<?php echo $conf_id; ?> input[name='participant_ids[]']");for(var i=0;i<boxes.length;i++){boxes[i].checked=c.checked;}}
@@ -1148,4 +1163,10 @@ include 'toppen.php';
     </div>
 
     <div class="text-center" style="margin-bottom:2rem;">
-        <a href="index.php" class
+        <a href="index.php" class="btn btn-primary" style="padding:0.7rem 1.5rem; font-size:1.1em;">Tillbaka till startsidan</a>
+    </div>
+</div>
+
+<?php
+include 'footer.php';
+?>
