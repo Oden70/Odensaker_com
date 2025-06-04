@@ -276,6 +276,110 @@ if (isset($_POST['save_bord_mail_option']) && isset($_POST['conf_id'])) {
     exit;
 }
 
+// --- AJAX-endpoint för att hämta deltagarlistan för en konferens ---
+if (
+    isset($_GET['ajax_participants']) &&
+    isset($_GET['conf_id']) &&
+    is_numeric($_GET['conf_id'])
+) {
+    $conf_id = (int)$_GET['conf_id'];
+    $search = trim($_GET['search'] ?? '');
+    $params = [$conf_id];
+    $where = '';
+    if ($search !== '') {
+        $where = "AND (fornamn LIKE ? OR efternamn LIKE ? OR hsaid LIKE ?)";
+        $params[] = "%$search%";
+        $params[] = "%$search%";
+        $params[] = "%$search%";
+    }
+    $sql = "SELECT id, fornamn, efternamn, hsaid, email, present, self_registered, bord FROM nv_participants WHERE conference_id = ? $where ORDER BY fornamn, efternamn";
+    $partStmt = $pdo->prepare($sql);
+    $partStmt->execute($params);
+    $participants = $partStmt->fetchAll();
+    $searchValue = htmlspecialchars($search, ENT_QUOTES);
+    ?>
+    <!-- Dynamiskt sökfält överst -->
+    <div class="mb-2">
+        <input type="text" class="form-control form-control-sm" id="search_input_<?php echo $conf_id; ?>" placeholder="Sök förnamn, efternamn eller HSA-ID..." autocomplete="off" oninput="searchParticipants_<?php echo $conf_id; ?>()" value="<?php echo $searchValue; ?>">
+    </div>
+    <form method="POST" id="delete_participants_form_<?php echo $conf_id; ?>" onsubmit="return confirm('Är du säker på att du vill ta bort markerade deltagare?');">
+        <input type="hidden" name="delete_participants" value="1">
+        <input type="hidden" name="conf_id" value="<?php echo $conf_id; ?>">
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered bg-white">
+                <thead class="table-light"><tr>
+                    <th style="width:2em;"><input type="checkbox" id="checkall_<?php echo $conf_id; ?>" onclick="toggleAllCheckboxes_<?php echo $conf_id; ?>()"></th>
+                    <th>Förnamn</th><th>Efternamn</th><th>HSA-ID</th><th>E-post</th><th>Närvaro</th><th>Självregistrerad</th><th>Bord</th>
+                </tr></thead>
+                <tbody>
+                <?php foreach ($participants as $p):
+                    $hasBord = trim($p['bord']) !== '';
+                    $inputId = 'bord_input_' . $p['id'];
+                    $btnId = 'edit_bord_btn_' . $p['id'];
+                    $isPresent = (int)$p['present'] === 1;
+                ?>
+                    <tr>
+                        <td><input type="checkbox" name="participant_ids[]" value="<?php echo $p['id']; ?>"></td>
+                        <td><?php echo htmlspecialchars($p['fornamn']); ?></td>
+                        <td><?php echo htmlspecialchars($p['efternamn']); ?></td>
+                        <td><?php echo htmlspecialchars($p['hsaid']); ?></td>
+                        <td><?php echo htmlspecialchars($p['email']); ?></td>
+                        <td><?php echo $isPresent ? '<span class="badge bg-success">Ja</span>' : '<span class="badge bg-secondary">Nej</span>'; ?></td>
+                        <td><?php echo $p['self_registered'] ? 'Ja' : 'Nej'; ?></td>
+                        <td style="min-width:120px;">
+                            <div class="input-group input-group-sm">
+                                <input type="text" name="bord_ids[<?php echo $p['id']; ?>]" id="<?php echo $inputId; ?>" value="<?php echo htmlspecialchars($p['bord']); ?>" class="form-control" style="min-width:60px;max-width:120px;" <?php echo $hasBord ? 'readonly style="background:#eee;cursor:not-allowed;"' : ''; ?>>
+                                <button type="button" class="btn btn-outline-secondary" id="<?php echo $btnId; ?>" onclick="unlockBordField('<?php echo $inputId; ?>', '<?php echo $btnId; ?>')" <?php echo !$hasBord ? 'style="display:none;"' : ''; ?> title="Redigera"><span class="bi bi-pencil"></span> &#9998;</button>
+                            </div>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <button type="submit" class="btn btn-danger btn-sm" name="delete_participants" value="1" onclick="return confirm('Är du säker på att du vill ta bort markerade deltagare?');">Ta bort markerade</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm mx-2" onclick="refreshParticipants_<?php echo $conf_id; ?>()">Uppdatera lista</button>
+                <button type="submit" class="btn btn-primary btn-sm" name="update_bord" value="1" style="margin-left:auto;" onclick="this.form.onsubmit=null;">Spara bordsplaceringar</button>
+            </div>
+        </div>
+    </form>
+    <script>
+    let searchTimeout_<?php echo $conf_id; ?> = null;
+    function searchParticipants_<?php echo $conf_id; ?>() {
+        clearTimeout(searchTimeout_<?php echo $conf_id; ?>);
+        searchTimeout_<?php echo $conf_id; ?> = setTimeout(function() {
+            refreshParticipants_<?php echo $conf_id; ?>();
+        }, 200);
+    }
+    function refreshParticipants_<?php echo $conf_id; ?>() {
+        var container = document.getElementById("participants_<?php echo $conf_id; ?>");
+        var search = document.getElementById("search_input_<?php echo $conf_id; ?>");
+        var searchVal = search ? encodeURIComponent(search.value) : '';
+        var url = "admin_panel.php?ajax_participants=1&conf_id=<?php echo $conf_id; ?>&search=" + searchVal;
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                // Spara nuvarande sökvärde
+                var currentValue = search.value;
+                container.innerHTML = xhr.responseText;
+                // Återställ sökvärdet efter AJAX-refresh
+                var newSearch = document.getElementById("search_input_<?php echo $conf_id; ?>");
+                if (newSearch) {
+                    newSearch.value = currentValue;
+                    newSearch.focus();
+                    newSearch.setSelectionRange(currentValue.length, currentValue.length);
+                }
+            }
+        };
+        xhr.send();
+    }
+    function toggleAllCheckboxes_<?php echo $conf_id; ?>(){var c=document.getElementById("checkall_<?php echo $conf_id; ?>");var boxes=document.querySelectorAll("#participants_<?php echo $conf_id; ?> input[name='participant_ids[]']");for(var i=0;i<boxes.length;i++){boxes[i].checked=c.checked;}}
+    </script>
+    <?php
+    exit;
+}
+
 // --- Hantera uppdatering av bord på deltagare ---
 if (
     $_SERVER['REQUEST_METHOD'] === 'POST' &&
@@ -380,11 +484,25 @@ if (
     is_numeric($_GET['conf_id'])
 ) {
     $conf_id = (int)$_GET['conf_id'];
-    // Endast själva tabellen och knapprad, ingen HTML-header eller PHP-logik runtomkring
-    $partStmt = $pdo->prepare("SELECT id, fornamn, efternamn, hsaid, email, present, self_registered, bord FROM nv_participants WHERE conference_id = ? ORDER BY fornamn, efternamn");
-    $partStmt->execute([$conf_id]);
+    $search = trim($_GET['search'] ?? '');
+    $params = [$conf_id];
+    $where = '';
+    if ($search !== '') {
+        $where = "AND (fornamn LIKE ? OR efternamn LIKE ? OR hsaid LIKE ?)";
+        $params[] = "%$search%";
+        $params[] = "%$search%";
+        $params[] = "%$search%";
+    }
+    $sql = "SELECT id, fornamn, efternamn, hsaid, email, present, self_registered, bord FROM nv_participants WHERE conference_id = ? $where ORDER BY fornamn, efternamn";
+    $partStmt = $pdo->prepare($sql);
+    $partStmt->execute($params);
     $participants = $partStmt->fetchAll();
+    $searchValue = htmlspecialchars($search, ENT_QUOTES);
     ?>
+    <!-- Dynamiskt sökfält överst -->
+    <div class="mb-2">
+        <input type="text" class="form-control form-control-sm" id="search_input_<?php echo $conf_id; ?>" placeholder="Sök förnamn, efternamn eller HSA-ID..." autocomplete="off" oninput="searchParticipants_<?php echo $conf_id; ?>()" value="<?php echo $searchValue; ?>">
+    </div>
     <form method="POST" id="delete_participants_form_<?php echo $conf_id; ?>" onsubmit="return confirm('Är du säker på att du vill ta bort markerade deltagare?');">
         <input type="hidden" name="delete_participants" value="1">
         <input type="hidden" name="conf_id" value="<?php echo $conf_id; ?>">
@@ -427,19 +545,37 @@ if (
         </div>
     </form>
     <script>
-    function toggleAllCheckboxes_<?php echo $conf_id; ?>(){var c=document.getElementById("checkall_<?php echo $conf_id; ?>");var boxes=document.querySelectorAll("#participants_<?php echo $conf_id; ?> input[name='participant_ids[]']");for(var i=0;i<boxes.length;i++){boxes[i].checked=c.checked;}}
+    let searchTimeout_<?php echo $conf_id; ?> = null;
+    function searchParticipants_<?php echo $conf_id; ?>() {
+        clearTimeout(searchTimeout_<?php echo $conf_id; ?>);
+        searchTimeout_<?php echo $conf_id; ?> = setTimeout(function() {
+            refreshParticipants_<?php echo $conf_id; ?>();
+        }, 200);
+    }
     function refreshParticipants_<?php echo $conf_id; ?>() {
-        var collapseId = "participants_<?php echo $conf_id; ?>";
-        var container = document.getElementById(collapseId);
+        var container = document.getElementById("participants_<?php echo $conf_id; ?>");
+        var search = document.getElementById("search_input_<?php echo $conf_id; ?>");
+        var searchVal = search ? encodeURIComponent(search.value) : '';
+        var url = "admin_panel.php?ajax_participants=1&conf_id=<?php echo $conf_id; ?>&search=" + searchVal;
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", "admin_panel.php?ajax_participants=1&conf_id=<?php echo $conf_id; ?>", true);
+        xhr.open("GET", url, true);
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4 && xhr.status == 200) {
+                // Spara nuvarande sökvärde
+                var currentValue = search.value;
                 container.innerHTML = xhr.responseText;
+                // Återställ sökvärdet efter AJAX-refresh
+                var newSearch = document.getElementById("search_input_<?php echo $conf_id; ?>");
+                if (newSearch) {
+                    newSearch.value = currentValue;
+                    newSearch.focus();
+                    newSearch.setSelectionRange(currentValue.length, currentValue.length);
+                }
             }
         };
         xhr.send();
     }
+    function toggleAllCheckboxes_<?php echo $conf_id; ?>(){var c=document.getElementById("checkall_<?php echo $conf_id; ?>");var boxes=document.querySelectorAll("#participants_<?php echo $conf_id; ?> input[name='participant_ids[]']");for(var i=0;i<boxes.length;i++){boxes[i].checked=c.checked;}}
     </script>
     <?php
     exit;
@@ -674,7 +810,12 @@ include 'toppen.php';
                 // Lägg till open/close logik
                 echo '<button type="button" class="btn btn-outline-secondary btn-sm mb-2" onclick="toggleCollapse(\'' . $collapseId . '\', this)">' . ($openCollapse ? 'Dölj deltagare' : 'Visa deltagare') . '</button>';
                 echo '<div id="' . $collapseId . '" style="display:' . ($openCollapse ? 'block' : 'none') . ';">';
-                // Formulär för borttagning av deltagare (omsluter hela tabellen)
+                // Sökfält
+                echo '<div class="mb-2">';
+                echo '<input type="text" class="form-control form-control-sm" id="search_input_' . $row['id'] . '" placeholder="Sök förnamn, efternamn eller HSA-ID..." autocomplete="off" oninput="searchParticipants_' . $row['id'] . '()">';
+                echo '</div>';
+                // Deltagarlistan (AJAX laddar om denna div)
+                echo '<div id="participants_' . $row['id'] . '">';
                 echo '<form method="POST" id="delete_participants_form_' . $row['id'] . '" onsubmit="return confirm(\'Är du säker på att du vill ta bort markerade deltagare?\');">';
                 echo '<input type="hidden" name="delete_participants" value="1">';
                 echo '<input type="hidden" name="conf_id" value="' . $row['id'] . '">';
@@ -732,10 +873,12 @@ include 'toppen.php';
                 ?>
                 <script>
                 function refreshParticipants_<?php echo $row['id']; ?>() {
-                    var collapseId = "<?php echo $collapseId; ?>";
-                    var container = document.getElementById(collapseId);
+                    var container = document.getElementById("participants_<?php echo $row['id']; ?>");
+                    var search = document.getElementById("search_input_<?php echo $row['id']; ?>");
+                    var searchVal = search ? encodeURIComponent(search.value) : '';
+                    var url = "admin_panel.php?ajax_participants=1&conf_id=<?php echo $row['id']; ?>&search=" + searchVal;
                     var xhr = new XMLHttpRequest();
-                    xhr.open("GET", "admin_panel.php?ajax_participants=1&conf_id=<?php echo $row['id']; ?>", true);
+                    xhr.open("GET", url, true);
                     xhr.onreadystatechange = function() {
                         if (xhr.readyState == 4 && xhr.status == 200) {
                             container.innerHTML = xhr.responseText;
