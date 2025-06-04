@@ -1,0 +1,319 @@
+/* Centrera login-container på sidan (gäller även logout_confirm.php) */
+html, body {
+    height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f7fa;
+}
+
+/* Grundläggande bakgrund och font */
+body {
+    background: #f5f7fa;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #222;
+}
+
+/* Header */
+.header {
+    background: #eee;
+    width: 100%;
+    min-height: 48px;
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    padding: 0 12px; /* Minska sidopadding från 24px till 12px */
+}
+
+.header-inner {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    box-sizing: border-box;
+}
+
+.header h1, .header .logo {
+    margin: 0;
+    font-size: 1.7em;
+    letter-spacing: 1px;
+}
+
+.logo {
+    font-size: 1.3em;
+    font-weight: 600;
+    color: #1a237e;
+}
+
+.logout-link {
+    color: #1a237e;
+    text-decoration: none;
+    font-weight: 500;
+    background: #e3e3f7;
+    padding: 0.5em 1.2em;
+    border-radius: 5px;
+    transition: background 0.2s;
+    margin-left: auto;
+    /* Lägg till max-width och overflow för att undvika att knappen trycks utanför */
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.logout-link:hover {
+    background: #d1d1e7;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 48px;
+    left: 0;
+    width: 200px;
+    height: calc(100vh - 48px);
+    background: #232b4a;
+    color: #fff;
+    box-shadow: 2px 0 8px #0001;
+    z-index: 900;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 24px;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.sidebar-title {
+    font-size: 1.4em;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 1.2em 32px;
+    letter-spacing: 2px;
+}
+
+.sidebar nav {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    padding: 0 0.5em;
+}
+
+.sidebar-link {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.08em;
+    padding: 0.7em 1.5em;
+    border-radius: 4px;
+    transition: background 0.18s;
+    display: block;
+}
+
+.sidebar-link:hover, .sidebar-link.active {
+    background: #3949ab;
+}
+
+.logout-link {
+    color: #fff;
+    background: #d32f2f;
+    font-weight: 600;
+    text-align: center;
+    display: block;
+    padding: 0.7em 1.5em;
+    border-radius: 4px;
+    margin-top: 2em;
+    transition: background 0.18s;
+    text-decoration: none;
+}
+
+.logout-link:hover {
+    background: #b71c1c;
+    color: #fff;
+}
+
+/* Main content */
+.dashboard-wrapper, .content-wrapper {
+    min-height: 100vh;
+    background: #f5f7fa;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.dashboard-main, .main-content {
+    margin-left: 220px;
+    padding: 40px 30px 30px 30px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px #0001;
+    max-width: 900px;
+    margin-top: 60px;
+    margin-bottom: 40px;
+}
+
+.dashboard-main h1, .main-content h1 {
+    color: #1a237e;
+    font-size: 2.2em;
+    margin-bottom: 0.5em;
+}
+
+.dashboard-main p, .main-content p {
+    font-size: 1.2em;
+    color: #333;
+}
+
+/* Formulär */
+form {
+    background: #fff;
+    max-width: 400px;
+    margin: 40px auto 0 auto;
+    padding: 2em 2em 1.5em 2em;
+    border-radius: 10px;
+    box-shadow: 0 4px 24px #0001;
+    border: 1px solid #e0e0e0;
+}
+
+form label {
+    font-weight: 500;
+    color: #333;
+    display: block;
+    margin-bottom: 0.5em;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form select {
+    width: 100%;
+    padding: 0.7em;
+    margin-top: 0.2em;
+    margin-bottom: 1em;
+    border: 1px solid #bdbdbd;
+    border-radius: 5px;
+    font-size: 1em;
+    background: #fafbfc;
+    transition: border 0.2s;
+    box-sizing: border-box;
+}
+
+form input[type="text"]:focus,
+form input[type="email"]:focus,
+form input[type="password"]:focus,
+form select:focus {
+    border: 1.5px solid #1a237e;
+    outline: none;
+    background: #fff;
+}
+
+form button[type="submit"], button[type="submit"] {
+    width: 100%;
+    padding: 0.8em;
+    background: #1a237e;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+form button[type="submit"]:hover, button[type="submit"]:hover {
+    background: #3949ab;
+}
+
+/* Meddelanden */
+.alert, .message {
+    max-width: 400px;
+    margin: 1em auto;
+    padding: 1em 1.5em;
+    border-radius: 6px;
+    font-size: 1.05em;
+    background: #e3f2fd;
+    color: #0d47a1;
+    border: 1px solid #90caf9;
+}
+
+.alert-danger {
+    background: #ffebee;
+    color: #b71c1c;
+    border: 1px solid #ef9a9a;
+}
+
+.alert-success {
+    background: #e8f5e9;
+    color: #1b5e20;
+    border: 1px solid #a5d6a7;
+}
+
+/* Responsivitet */
+@media (max-width: 1100px) {
+    .dashboard-main, .main-content {
+        max-width: 98vw;
+        margin-left: 220px;
+    }
+}
+
+@media (max-width: 900px) {
+    .header {
+        position: static;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0 10px;
+    }
+    .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        align-items: center;
+        padding: 0.5em 0.5em;
+        box-shadow: none;
+    }
+    .sidebar-title {
+        margin: 0 1em 0 0;
+        font-size: 1.1em;
+    }
+    .sidebar nav {
+        flex-direction: row;
+        gap: 0.5em;
+        padding: 0;
+    }
+    .sidebar-link, .logout-link {
+        padding: 0.6em 0.8em;
+        font-size: 1em;
+        margin-top: 0;
+    }
+    .dashboard-main, .main-content {
+        margin-left: 0;
+        margin-top: 20px;
+        padding: 20px 10px;
+        max-width: 100vw;
+    }
+}
+
+@media (max-width: 600px) {
+    .header {
+        padding: 0 4px;
+    }
+    .dashboard-main, .main-content, form {
+        padding: 1em 0.5em;
+    }
+    .sidebar {
+        font-size: 0.95em;
+    }
+}

@@ -1,0 +1,186 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+.dashboard-container {
+    max-width: 1100px;
+    margin: 50px auto;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-container h2 {
+    font-size: 28px;
+    color: #333333;
+    margin-bottom: 10px;
+}
+
+.dashboard-container p {
+    font-size: 16px;
+    color: #555555;
+    margin-bottom: 20px;
+}
+
+.dashboard-container ul {
+    list-style: none;
+    padding: 0;
+}
+
+.dashboard-container ul li {
+    margin-bottom: 10px;
+}
+
+.dashboard-container ul li a {
+    text-decoration: none;
+    color: #007bff;
+    font-size: 16px;
+}
+
+.dashboard-container ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Styling för profilsidan */
+.profile-container {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 1100px;
+    margin: 50px auto;
+}
+
+.profile-container h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333333;
+    text-align: center;
+}
+
+.profile-container label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555555;
+}
+
+.profile-container input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.profile-container button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.profile-container button:hover {
+    background-color: #0056b3;
+}
+
+.profile-container p {
+    text-align: center;
+    margin-top: 10px;
+    color: green;
+}
+
+.banner {
+    background-image: url('banner.jpg'); /* Byt till din bild */
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 60px 20px;
+}
+
+.sidebar .nav-link {
+    color: white;
+}
+
+.sidebar .nav-link.active {
+    background-color: #495057;
+}
+
+@media (min-width: 992px) {
+    .offcanvas-lg {
+        position: static;
+        transform: none;
+        visibility: visible !important;
+        background-color: #343a40;
+        color: white;
+        width: 220px;
+    }
+}
+
+.login-container, .verify-container {
+    max-width: 400px;
+    margin: 5vh auto 0 auto;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px #0002;
+    padding: 2.5rem 2rem 2rem 2rem;
+}
+
+.login-header, .verify-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.form-control { margin-bottom: 1.2rem; }
+
+.btn-primary { width: 100%; }
+
+.login-footer, .verify-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #888;
+    font-size: 0.95em;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.5rem 0;
+}
+
+.page-header {
+    background: #e9ecef;
+    border: 1px solid #bbb;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px #0001;
+    text-align: center;
+}
+
+.page-section {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px #0001;
+}
+
+.search-form input[type=text] { width: 100%; margin-bottom: 1rem; }
+.result-list { padding-left: 0; }
+.result-list li { list-style: none; margin-bottom: 1em; }
+@media (max-width: 600px) {
+    .container { padding: 0.5rem 0.2rem; }
+}

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= t('dashboard') ?> - LSM</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap');
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', Arial, sans-serif;
+}
+body {
+    min-height: 100vh;
+    min-width: 100vw;
+}
+.layout-root {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    width: 100vw;
+}
+.sidebar {
+    width: 220px;
+    background-color: #2c3e50;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+.sidebar h2 {
+    margin-bottom: 1.5em;
+}
+.sidebar .menu-group {
+    margin-bottom: 1.5em;
+}
+.sidebar .menu-title {
+    font-size: 1.08em;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    margin-top: 1em;
+    color: #b0bec5;
+    letter-spacing: 1px;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+}
+.sidebar .menu-title:after {
+    content: '▼';
+    font-size: 0.8em;
+    margin-left: auto;
+    transition: transform 0.2s;
+}
+.sidebar .menu-title.closed:after {
+    transform: rotate(-90deg);
+}
+.sidebar .submenu {
+    margin-left: 10px;
+    border-left: 2px solid #3949ab;
+    padding-left: 10px;
+    display: none;
+}
+.sidebar .submenu.open {
+    display: block;
+}
+.sidebar a,
+.sidebar .submenu a {
+    color: white;
+    text-decoration: none;
+    margin: 6px 0;
+    padding: 8px 10px;
+    border-radius: 5px;
+    display: block;
+    font-size: 1em;
+}
+.sidebar a.active,
+.sidebar a:hover {
+    background-color: #34495e;
+}
+.main-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 100vh;
+    background: #f4f4f4;
+}
+.topbar {
+    background-color: #ecf0f1;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    min-height: 48px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.content {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+.profile-container {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 24px #0001;
+    padding: 2em 2em 1.5em 2em;
+    margin-top: 2em;
+}
+.login-form label {
+    font-weight: 500;
+    color: #333;
+    display: block;
+    margin-bottom: 0.5em;
+}
+.login-form input[type="text"],
+.login-form input[type="email"] {
+    width: 100%;
+    padding: 0.7em;
+    margin-top: 0.2em;
+    margin-bottom: 1em;
+    border: 1px solid #bdbdbd;
+    border-radius: 5px;
+    font-size: 1em;
+    background: #fafbfc;
+    transition: border 0.2s;
+    box-sizing: border-box;
+}
+.login-form input[type="text"]:focus,
+.login-form input[type="email"]:focus {
+    border: 1.5px solid #1a237e;
+    outline: none;
+    background: #fff;
+}
+.login-form button[type="submit"] {
+    width: 100%;
+    padding: 0.8em;
+    background: #1a237e;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.login-form button[type="submit"]:hover {
+    background: #3949ab;
+}
+.alert {
+    max-width: 400px;
+    margin: 1em auto;
+    padding: 1em 1.5em;
+    border-radius: 6px;
+    font-size: 1.05em;
+    background: #e3f2fd;
+    color: #0d47a1;
+    border: 1px solid #90caf9;
+    text-align: center;
+}
+.alert-success {
+    background: #e8f5e9;
+    color: #1b5e20;
+    border: 1px solid #a5d6a7;
+}
+.alert-danger {
+    background: #ffebee;
+    color: #b71c1c;
+    border: 1px solid #ef9a9a;
+}
+@media (max-width: 900px) {
+    .layout-root {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100vw;
+        min-width: 0;
+        height: auto;
+        min-height: 0;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    .main-area {
+        min-height: 0;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>LSM</h2>
+        <a href="?page=overview" class="<?= active('overview') ?>"><?= t('dashboard') ?></a>
+        <a href="?page=courses" class="<?= active('courses') ?>"><?= t('courses') ?></a>
+        <a href="?page=create_course" class="<?= active('create_course') ?>"><?= t('add_course') ?></a>
+        <a href="?page=users" class="<?= active('users') ?>"><?= t('users') ?></a>
+        <a href="?page=settings" class="<?= active('settings') ?>"><?= t('settings') ?></a>
+        <a href="auth/logout.php"><?= t('logout') ?></a>
+    </div>
+
+    <div class="main">
+        <div class="topbar">
+            <?= t('dashboard') ?> |
+            <a href="?page=profile" style="font-weight:bold; color:#1a237e; text-decoration:none;">
+                <?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>
+            </a>
+        </div>
+
+        <div class="content">
+            <?php
+            switch ($page) {
+                case 'courses':
+                    include 'courses/index.php';
+                    break;
+                case 'create_course':
+                    include 'courses/create.php';
+                    break;
+                case 'sessions':
+                    if (!empty($_GET['course_id'])) {
+                        $course_id = (int)$_GET['course_id'];
+                        include 'courses/sessions.php';
+                    } else {
+                        echo "<p>Course ID missing.</p>";
+                    }
+                    break;
+                case 'users':
+                    echo "<h2>" . t('users') . "</h2><p>Här hanterar du användare.</p>";
+                    break;
+                case 'settings':
+                    echo "<h2>" . t('settings') . "</h2><p>Inställningar för ditt konto eller systemet.</p>";
+                    break;
+                case 'profile':
+                    include 'profile.php';
+                    break;
+                case 'overview':
+                default:
+                    echo "<h2>" . t('dashboard') . "</h2><p>Välkommen till LSM-systemet!</p>";
+                    break;
+            }
+            ?>
+        </div>
+    </div>
+</body>
+</html>
